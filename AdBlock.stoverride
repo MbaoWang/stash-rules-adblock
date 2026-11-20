@@ -1,0 +1,107 @@
+name: "去廣告｜開屏 + App 內廣告"
+desc: "攔截主流廣告 SDK（開屏 / 插頁 / 橫幅 / 激勵影片）與廣告聯盟網域，並掛載社群維護的廣告規則集"
+category: "AdBlock"
+icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png"
+
+# ============================================================
+# 1. 遠端規則集（社群維護、每日自動更新，涵蓋範圍最廣）
+#    若覺得誤擋太多，可把 Advertising 換成 AdvertisingLite
+# ============================================================
+rule-providers:
+  AdBlock-Remote:
+    behavior: classical
+    format: yaml
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml"
+    interval: 86400
+
+# ============================================================
+# 2. 本地規則（會插在你原本規則的最前面）
+#    只擋「純廣告用途」的網域，避免 App 壞掉
+# ============================================================
+rules:
+  # ---------- 穿山甲 Pangle（字節跳動，開屏廣告大宗） ----------
+  - DOMAIN-SUFFIX,pangolin-sdk-toutiao.com,REJECT
+  - DOMAIN-SUFFIX,pangolin-sdk-toutiao-b.com,REJECT
+  - DOMAIN-SUFFIX,pangle.io,REJECT
+  - DOMAIN-SUFFIX,pglstatp-toutiao.com,REJECT
+  - DOMAIN-SUFFIX,ad.oceanengine.com,REJECT
+
+  # ---------- 騰訊廣點通 GDT / 優量匯 ----------
+  - DOMAIN-SUFFIX,gdt.qq.com,REJECT
+  - DOMAIN-SUFFIX,l.qq.com,REJECT
+  - DOMAIN,mi.gdt.qq.com,REJECT
+  - DOMAIN,pgdt.gtimg.cn,REJECT
+  - DOMAIN,adsmind.gdtimg.com,REJECT
+
+  # ---------- 快手聯盟 ----------
+  - DOMAIN-SUFFIX,adukwai.com,REJECT
+  - DOMAIN,open.e.kuaishou.com,REJECT
+
+  # ---------- 百度聯盟 ----------
+  - DOMAIN,mobads.baidu.com,REJECT
+  - DOMAIN,mobads-logs.baidu.com,REJECT
+  - DOMAIN,cpro.baidustatic.com,REJECT
+
+  # ---------- 阿里 / 京東 / 其他中國廣告聯盟 ----------
+  - DOMAIN-SUFFIX,tanx.com,REJECT
+  - DOMAIN-SUFFIX,sigmob.cn,REJECT
+  - DOMAIN-SUFFIX,sigmob.com,REJECT
+  - DOMAIN-SUFFIX,admaster.com.cn,REJECT
+  - DOMAIN-SUFFIX,miaozhen.com,REJECT
+  - DOMAIN-SUFFIX,adx.ads.oppomobile.com,REJECT
+  - DOMAIN-SUFFIX,ad.xiaomi.com,REJECT
+  - DOMAIN-SUFFIX,umeng.co,REJECT
+
+  # ---------- Google 廣告（AdMob / DoubleClick） ----------
+  - DOMAIN,googleads.g.doubleclick.net,REJECT
+  - DOMAIN-SUFFIX,googlesyndication.com,REJECT
+  - DOMAIN-SUFFIX,googleadservices.com,REJECT
+  - DOMAIN,pagead2.googlesyndication.com,REJECT
+  - DOMAIN,ad.doubleclick.net,REJECT
+
+  # ---------- 海外遊戲 / App 常見廣告 SDK ----------
+  - DOMAIN-SUFFIX,applovin.com,REJECT
+  - DOMAIN-SUFFIX,applvn.com,REJECT
+  - DOMAIN-SUFFIX,unityads.unity3d.com,REJECT
+  - DOMAIN-SUFFIX,supersonicads.com,REJECT
+  - DOMAIN-SUFFIX,vungle.com,REJECT
+  - DOMAIN-SUFFIX,mintegral.com,REJECT
+  - DOMAIN-SUFFIX,rayjump.com,REJECT
+  - DOMAIN-SUFFIX,inmobi.com,REJECT
+  - DOMAIN-SUFFIX,chartboost.com,REJECT
+  - DOMAIN-SUFFIX,adcolony.com,REJECT
+  - DOMAIN-SUFFIX,tapjoy.com,REJECT
+  - DOMAIN-SUFFIX,fyber.com,REJECT
+  - DOMAIN-SUFFIX,bidmachine.io,REJECT
+  - DOMAIN-SUFFIX,smaato.net,REJECT
+  - DOMAIN-SUFFIX,adsmoloco.com,REJECT
+
+  # ---------- 台灣常見廣告聯盟 ----------
+  - DOMAIN-SUFFIX,vpon.com,REJECT
+  - DOMAIN-SUFFIX,vpadn.com,REJECT
+  - DOMAIN-SUFFIX,clickforce.com.tw,REJECT
+  - DOMAIN-SUFFIX,onead.com.tw,REJECT
+  - DOMAIN-SUFFIX,tenmax.io,REJECT
+  - DOMAIN-SUFFIX,adgeek.com.tw,REJECT
+  - DOMAIN-SUFFIX,scupio.com,REJECT
+  - DOMAIN-SUFFIX,ad2iction.com,REJECT
+
+  # ---------- 遠端規則集 ----------
+  - RULE-SET,AdBlock-Remote,REJECT
+
+# ============================================================
+# 3. URL 重寫：針對「開屏廣告設定檔」回傳空資料
+#    （App 拿到空的廣告清單就不會顯示開屏）
+#    需要 MITM 的網域列在下方 mitm
+# ============================================================
+http:
+  mitm:
+    - "pangolin.snssdk.com"
+    - "api-access.pangolin-sdk-toutiao.com"
+    - "mobads.baidu.com"
+
+  url-rewrite:
+    # 穿山甲開屏 / 插頁廣告請求
+    - ^https?:\/\/(api-access\.pangolin-sdk-toutiao|pangolin\.snssdk)\.com\/api\/ad\/union\/sdk\/(get_ads|stats|settings) - reject-dict
+    # 百度開屏
+    - ^https?:\/\/mobads\.baidu\.com\/cpro\/ui\/mads - reject-dict
