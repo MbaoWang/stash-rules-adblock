@@ -52,6 +52,19 @@ rules:
   - DOMAIN-SUFFIX,ad.xiaomi.com,REJECT
   - DOMAIN-SUFFIX,umeng.co,REJECT
 
+  # ---------- 聚合廣告平台（依使用者連線日誌補充） ----------
+  - DOMAIN-SUFFIX,adn-plus.com.cn,REJECT
+  - DOMAIN-SUFFIX,anythinktech.com,REJECT
+  - DOMAIN-SUFFIX,yfanads.com,REJECT
+  - DOMAIN-SUFFIX,beizi.biz,REJECT
+  - DOMAIN-SUFFIX,statisticslinks.com,REJECT
+  - DOMAIN-SUFFIX,bridgeoos.com,REJECT
+  - DOMAIN-SUFFIX,weszxdrf.com,REJECT
+  - DOMAIN-SUFFIX,etoolads.cn,REJECT
+  - DOMAIN,sdktmp.hubcloud.com.cn,REJECT
+  - DOMAIN,huichuan.sm.cn,REJECT
+  - DOMAIN-SUFFIX,e.qq.com,REJECT
+
   # ---------- Google 廣告（AdMob / DoubleClick） ----------
   - DOMAIN,googleads.g.doubleclick.net,REJECT
   - DOMAIN-SUFFIX,googlesyndication.com,REJECT
